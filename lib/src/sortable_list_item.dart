@@ -1,0 +1,116 @@
+import 'package:flutter/material.dart';
+
+import 'sortable_item_status.dart';
+
+typedef Widget SortableListItemBuilder(BuildContext context, Widget handle);
+typedef void OffsetChanged(Offset value);
+
+class SortableListItem extends StatefulWidget {
+  SortableListItem({
+    required Key key,
+    required this.builder,
+    required this.handle,
+    required this.onDragStop,
+    required this.onDragUpdate,
+    required this.onDragTouch,
+    required this.extent,
+    required this.status,
+    required this.animDuration,
+    required this.scrollDirection,
+  }) : super(key: key);
+
+  final SortableListItemBuilder builder;
+  final Widget handle;
+  final OffsetChanged onDragStop;
+  final OffsetChanged onDragUpdate;
+  final OffsetChanged onDragTouch;
+  final double extent;
+  final SortableItemStatus status;
+  final Duration? animDuration;
+  final Axis scrollDirection;
+
+  @override
+  SortableListItemState createState() => SortableListItemState();
+}
+
+class SortableListItemState extends State<SortableListItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animator;
+  late Animation<double> _transAnim;
+  late SortableItemStatus _status;
+  SortableItemStatus? _prevStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _status = SortableItemStatus.SETTLED;
+    _animator = AnimationController(
+      vsync: this,
+      value: 1.0,
+      duration: widget.animDuration,
+    );
+    _transAnim = _animator.drive(Tween(begin: 0.0, end: 0.0));
+  }
+
+  @override
+  void dispose() {
+    _animator.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(SortableListItem old) {
+    super.didUpdateWidget(old);
+    if (widget.status != old.status) {
+      _prevStatus = _status;
+      _status = widget.status;
+      if (_didChangeIndex) {
+        _updateTransAnim();
+      }
+    }
+  }
+
+  bool get _didChangeIndex =>
+      (_prevStatus == SortableItemStatus.AFTER &&
+          _status == SortableItemStatus.BEFORE) ||
+      (_prevStatus == SortableItemStatus.BEFORE && _status == SortableItemStatus.AFTER);
+
+  void _updateTransAnim() {
+    final trans = widget.extent * (_status == SortableItemStatus.BEFORE ? 1 : -1);
+    _transAnim = Tween(begin: trans, end: 0.0)
+        .chain(CurveTween(curve: Curves.easeInOut))
+        .animate(_animator);
+    _animator.forward(from: 1 - _animator.value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: _status == SortableItemStatus.HOVER ? 0.0 : 1.0,
+      child: AbsorbPointer(
+        absorbing: _status == SortableItemStatus.HOVER,
+        child: AnimatedBuilder(
+          animation: _transAnim,
+          child: widget.builder(context, _wrapHandle()),
+          builder: (_, child) => Transform.translate(
+            offset: widget.scrollDirection == Axis.vertical
+                ? Offset(0.0, _transAnim.value)
+                : Offset(_transAnim.value, 0.0),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _wrapHandle() {
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerCancel: (it) => widget.onDragStop(it.position),
+      onPointerUp: (it) => widget.onDragStop(it.position),
+      onPointerDown: (it) => widget.onDragTouch(it.position),
+      onPointerMove: (it) => widget.onDragUpdate(it.delta),
+      child: widget.handle,
+    );
+  }
+}
