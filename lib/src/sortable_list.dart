@@ -101,7 +101,7 @@ class SortableList<T> extends StatefulWidget with AxisDimensions {
 
     this.handleBuilder = handleBuilder ?? ((_) => Center(child: Icon(Icons.drag_handle, size: 24.0)));
     this.feedbackItemBuilder = feedbackItemBuilder ?? ((context, item, handle, _) => itemBuilder(context, item, handle));
-    this.feedbackHandleBuilder = feedbackHandleBuilder ?? ((context, _) => this.handleBuilder!(context));
+    this.feedbackHandleBuilder = feedbackHandleBuilder ?? ((context, _) => this.handleBuilder(context));
   }
 
   SortableList.handleLess({
