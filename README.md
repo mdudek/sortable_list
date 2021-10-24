@@ -4,7 +4,6 @@
 
 Flutter list widget that allows to drag and drop items and define custom drag handle widget.
 
-![DragList demo](https://giant.gfycat.com/BraveElegantDarklingbeetle.gif)
 
 ## Getting Started
 
@@ -73,3 +72,5 @@ SortableList<String>.handleless(
   },
 ),
 ```
+
+Many thanks to Tomek Wyrowiński - author of original 'Drag_list' package.
