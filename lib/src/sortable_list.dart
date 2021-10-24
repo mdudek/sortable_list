@@ -35,7 +35,7 @@ class SortableList<T> extends StatefulWidget with AxisDimensions {
 
   /// Relative position within item widget that corresponds to the center of
   /// handle, where -1.0 stands for beginning and 1.0 for end of the item.
-  late double handleAlignment;
+  double handleAlignment;
 
   /// Duration of raise and drop animation of dragged item.
   Duration? animDuration;
@@ -86,7 +86,7 @@ class SortableList<T> extends StatefulWidget with AxisDimensions {
     Key? key,
     Duration? animDuration = const Duration(milliseconds: 300),
     this.dragDelay = Duration.zero,
-    double handleAlignment = 0.0,
+    this.handleAlignment = 0.0,
     Axis? scrollDirection = Axis.vertical,
     bool? shrinkWrap = false,
     feedbackItemBuilder,
