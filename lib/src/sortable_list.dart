@@ -63,11 +63,11 @@ class SortableList<T> extends StatefulWidget with AxisDimensions {
   ItemReorderCallback? onItemReorder;
 
   /// Axis orientation of the list widget.
-  late Axis scrollDirection;
+  Axis? scrollDirection;
 
   /// Whether the extent of the scroll view in the scrollDirection
   /// should be determined by the contents being viewed.
-  late bool shrinkWrap;
+  bool? shrinkWrap;
 
   /// An object that can be used to control the position to which this scroll
   /// view is scrolled.
@@ -84,11 +84,11 @@ class SortableList<T> extends StatefulWidget with AxisDimensions {
     required this.itemExtent,
     required this.itemBuilder,
     Key? key,
-    Duration? animDuration = const Duration(milliseconds: 300),
+    this.animDuration = const Duration(milliseconds: 300),
     this.dragDelay = Duration.zero,
     this.handleAlignment = 0.0,
-    Axis? scrollDirection = Axis.vertical,
-    bool? shrinkWrap = false,
+    this.scrollDirection = Axis.vertical,
+    this.shrinkWrap = false,
     feedbackItemBuilder,
     feedbackHandleBuilder,
     handleBuilder,
@@ -140,5 +140,5 @@ class SortableList<T> extends StatefulWidget with AxisDimensions {
   SortableListState<T> createState() => SortableListState<T>();
 
   @override
-  Axis get axis => scrollDirection;
+  Axis get axis => scrollDirection!;
 }

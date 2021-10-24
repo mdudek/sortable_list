@@ -130,7 +130,7 @@ class SortableListState<T> extends State<SortableList<T>>
 
   Widget _buildOverlay(BuildContext context) {
     return SortableOverlay(
-      scrollDirection: widget.scrollDirection,
+      scrollDirection: widget.scrollDirection!,
       itemStart: _touchStartOffset! - _dragStartOffset! + _boundedDragDelta!,
       listBox: _listBox,
       itemExtent: widget.itemExtent,
@@ -158,8 +158,8 @@ class SortableListState<T> extends State<SortableList<T>>
     return ListView.builder(
       physics: _isDragSettled ? widget.physics : NeverScrollableScrollPhysics(),
       padding: widget.padding,
-      scrollDirection: widget.scrollDirection,
-      shrinkWrap: widget.shrinkWrap,
+      scrollDirection: widget.scrollDirection!,
+      shrinkWrap: widget.shrinkWrap!,
       itemExtent: widget.itemExtent,
       controller: _scrollController,
       itemCount: widget.items.length,
@@ -197,7 +197,7 @@ class SortableListState<T> extends State<SortableList<T>>
       onDragUpdate: (delta) => _onItemDragUpdate(itemIndex, delta),
       extent: widget.itemExtent,
       animDuration: widget.animDuration,
-      scrollDirection: widget.scrollDirection,
+      scrollDirection: widget.scrollDirection!,
       status: SortableItemStatus(dispIndex, _hoverIndex),
     );
   }
@@ -346,13 +346,13 @@ class SortableListState<T> extends State<SortableList<T>>
         : _lastTouchOffset! < widget.itemExtent / 2;
     if (_overDragSub == null && _isDragging! && isDraggedBeyond) {
       _overDragSub = Stream.periodic(Duration(milliseconds: 16))
-          .listen((_) => _onOverdragUpdate());
+          .listen((_) => _onOverDragUpdate());
     } else if (_overDragSub != null && !isDraggedBeyond) {
       _stopOverdrag();
     }
   }
 
-  void _onOverdragUpdate() {
+  void _onOverDragUpdate() {
     final canScrollMore = _dragsForwards
         ? _scrollOffset < widget.items.length * widget.itemExtent - _listSize
         : _scrollOffset > 0;
